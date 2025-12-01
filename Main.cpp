@@ -1,4 +1,4 @@
-﻿#include <graphics.h>
+#include <graphics.h>
 #include <stdio.h>
 #include <iostream>
 #include <stdlib.h>
@@ -30,104 +30,85 @@ uint64_t engHistoryhashBoardList[100]; bool engHistoryCheckList[100];
 int global_piece_num[15] = { 0 }, global_piece_pos[33][2] = {}, global_board[10][9] = { 0 };// piece_index[33] = { 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 6, 6, 7, 7, 7, 7, 7, -1, -1, -2, -2, -3, -3, -4, -4, -5, -6, -6, -7, -7, -7, -7, -7 };
 // global_piece_pos_index 是对应 global_piece_pos 中位置的索引，即 黑方 兵，炮，将，士，相，马，车，无棋子，红方 车，马，相，士，将，炮，兵
 static const int global_piece_pos_index[15] = { 28, 26, 25, 23, 21, 19, 17, 0, 1, 3, 5, 7, 9, 10, 12 }; 
-static const int pos_var[8][90] = {
-		{
-		0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-		0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-		0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-		0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-		0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-		0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-		0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-		0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-		0,  0,  0,  0,  0,  0,  0,  0,  0,  0
-	},
-	//车2
-	{
-		-9,  8, -3,  6, 12, 12,  9,  9,  9,  9,
-		 9, 12, 12, 14, 18, 16, 20, 12, 18, 12,
-		 6,  9,  6,  6, 18, 16, 20, 10, 14, 10,
-		18, 18, 18, 18, 21, 21, 24, 21, 25, 20,
-		 0,  0, 18, 21, 22, 22, 24, 24, 50, 21,
-		18, 18, 18, 18, 21, 21, 24, 21, 25, 20,
-		 6,  9,  6,  6, 18, 16, 20, 10, 14, 10,
-		 9, 12, 12, 14, 18, 16, 20, 12, 18, 12,
-		-9,  8, -3,  6, 12, 12,  9,  9,  9,  9
-	},
-	//马3
-	{
-		 0, -4,  8,  6,  3,  3,  8,  6,  3,  3,
-		-6,  3,  6,  9, 15, 18, 35, 15, 12,  3,
-		 3,  6,  9, 15, 20, 16, 18, 16, 25,  3,
-		 0,  8, 10, 10, 21, 22, 28, 25, 14, 12,
-		 3,-22,  6, 15, 22, 24, 18, 16,  9,  3,
-		 0,  8, 10, 10, 21, 22, 28, 25, 14, 12,
-		 3,  6,  9, 15, 20, 16, 18, 16, 25,  3,
-		-6,  3,  6,  9, 15, 18, 35, 15, 12,  3,
-		 0, -4,  8,  6,  3,  3,  8,  6,  3,  3
-	},
-	//相4
-	{
-		0,  0, -3,  0,  0,  0,  0,  0,  0,  0,
-		0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-		0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-		0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-		0,  0,  8,  0,  0,  0,  0,  0,  0,  0,
-		0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-		0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-		0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-		0,  0, -3,  0,  0,  0,  0,  0,  0,  0
-	},
-	//士6
-	{
-		0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-		0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-		0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-		0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-		0,  4,  0,  0,  0,  0,  0,  0,  0,  0,
-		0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-		0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-		0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-		0,  0,  0,  0,  0,  0,  0,  0,  0,  0
-	},
-	//将8
-	{
-		0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-		0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-		0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-		2,-15,-25,  0,  0,  0,  0,  0,  0,  0,
-		8,-13,-25,  0,  0,  0,  0,  0,  0,  0,
-		2,-15,-25,  0,  0,  0,  0,  0,  0,  0,
-		0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-		0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-		0,  0,  0,  0,  0,  0,  0,  0,  0,  0
-	},
-	//炮9
-	{
-		0,  0,  2,  0, -2,  0,  0,  2,  3,  6,
-		0,  2,  0,  0,  0,  0,  4,  2,  3,  4,
-		2,  3,  6,  0,  4,  0,  4,  0,  0,  0,
-		4,  3,  4,  0,  0,  0,  3, -8, -6, -8,
-		4,  3,  8,  0,  4,  6,  6, -6,-10, -9,
-		4,  3,  4,  0,  0,  0,  3, -8, -6, -8,
-		2,  3,  6,  0,  4,  0,  4,  0,  0,  0,
-		0,  2,  0,  0,  0,  0,  4,  2,  3,  4,
-		0,  0,  2,  0, -2,  0,  0,  2,  3,  6
-	},
-	//兵10
-	{
-		0,  0,  0, -3,  4, 20, 33, 33, 33,  0,
-		0,  0,  0,  0,  0, 30, 44, 50, 50,  0,
-		0,  0,  0, -3,  7, 36, 60, 75, 83,  0,
-		0,  0,  0,  0,  0, 57, 66, 90, 108, 3,
-		0,  0,  0, 10, 13, 66, 69, 90, 116, 7,
-		0,  0,  0,  0,  0, 57, 66, 90, 108, 3,
-		0,  0,  0, -3,  7, 36, 60, 75, 83,  0,
-		0,  0,  0,  0,  0, 30, 44, 50, 50,  0,
-		0,  0,  0, -3,  4, 20, 33, 33, 33,  0
-	}
 
+static const int rook_pos_var[90] = {
+	-9,  8, -3,  6, 12, 12,  9,  9,  9,  9,
+	 9, 12, 12, 14, 18, 16, 20, 12, 18, 12,
+	 6,  9,  6,  6, 18, 16, 20, 10, 14, 10,
+	18, 18, 18, 18, 21, 21, 24, 21, 25, 20,
+	 0,  0, 18, 21, 22, 22, 24, 24, 50, 21,
+	18, 18, 18, 18, 21, 21, 24, 21, 25, 20,
+	 6,  9,  6,  6, 18, 16, 20, 10, 14, 10,
+	 9, 12, 12, 14, 18, 16, 20, 12, 18, 12,
+	-9,  8, -3,  6, 12, 12,  9,  9,  9,  9
 };
+static const int knight_pos_var[90] = {
+	 0, -4,  8,  6,  3,  3,  8,  6,  3,  3,
+	-6,  3,  6,  9, 15, 18, 35, 15, 12,  3,
+	 3,  6,  9, 15, 20, 16, 18, 16, 25,  3,
+	 0,  8, 10, 10, 21, 22, 28, 25, 14, 12,
+	 3,-22,  6, 15, 22, 24, 18, 16,  9,  3,
+	 0,  8, 10, 10, 21, 22, 28, 25, 14, 12,
+	 3,  6,  9, 15, 20, 16, 18, 16, 25,  3,
+	-6,  3,  6,  9, 15, 18, 35, 15, 12,  3,
+	 0, -4,  8,  6,  3,  3,  8,  6,  3,  3
+};
+static const int bishop_pos_var[90] = {
+	0,  0, -3,  0,  0,  0,  0,  0,  0,  0,
+	0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+	0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+	0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+	0,  0,  8,  0,  0,  0,  0,  0,  0,  0,
+	0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+	0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+	0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+	0,  0, -3,  0,  0,  0,  0,  0,  0,  0
+};
+static const int assistant_pos_var[90] = {
+	0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+	0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+	0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+	0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+	0,  4,  0,  0,  0,  0,  0,  0,  0,  0,
+	0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+	0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+	0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+	0,  0,  0,  0,  0,  0,  0,  0,  0,  0
+};
+static const int king_pos_var[90] = {
+	0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+	0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+	0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+	2,-15,-25,  0,  0,  0,  0,  0,  0,  0,
+	8,-13,-25,  0,  0,  0,  0,  0,  0,  0,
+	2,-15,-25,  0,  0,  0,  0,  0,  0,  0,
+	0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+	0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+	0,  0,  0,  0,  0,  0,  0,  0,  0,  0
+};
+static const int cannon_pos_var[90] = {
+	0,  0,  2,  0, -2,  0,  0,  2,  3,  6,
+	0,  2,  0,  0,  0,  0,  4,  2,  3,  4,
+	2,  3,  6,  0,  4,  0,  4,  0,  0,  0,
+	4,  3,  4,  0,  0,  0,  3, -8, -6, -8,
+	4,  3,  8,  0,  4,  6,  6, -6,-10, -9,
+	4,  3,  4,  0,  0,  0,  3, -8, -6, -8,
+	2,  3,  6,  0,  4,  0,  4,  0,  0,  0,
+	0,  2,  0,  0,  0,  0,  4,  2,  3,  4,
+	0,  0,  2,  0, -2,  0,  0,  2,  3,  6
+};
+static const int pawn_pos_var[90] = {
+	0,  0,  0, -3,  4, 20, 33, 33, 33,  0,
+	0,  0,  0,  0,  0, 30, 44, 50, 50,  0,
+	0,  0,  0, -3,  7, 36, 60, 75, 83,  0,
+	0,  0,  0,  0,  0, 57, 66, 90, 108, 3,
+	0,  0,  0, 10, 13, 66, 69, 90, 116, 7,
+	0,  0,  0,  0,  0, 57, 66, 90, 108, 3,
+	0,  0,  0, -3,  7, 36, 60, 75, 83,  0,
+	0,  0,  0,  0,  0, 30, 44, 50, 50,  0,
+	0,  0,  0, -3,  4, 20, 33, 33, 33,  0
+};
+
 
 // Hash
 static void init_hashBoard() {//黑色是0，红色是1，处理方法：-1 + 1 >> 1 = 0， 1 + 1 >> 1 = 1
@@ -558,7 +539,7 @@ static void printpiece(int8_t board[10][9], int movepiece)
 					break;
 				case 5:
 					settextcolor(RGB(255, 0, 0));
-					outtextxy(52 + 62 * j - 16, 42 + 62 * i - 16, "帅");
+					outtextxy(52 + 62 * j - 16, 42 + 62 * i - 16, "帥");
 					break;
 				case 6:
 					settextcolor(RGB(255, 0, 0));
@@ -1166,40 +1147,34 @@ static int GenMove(int8_t curboard[10][9], int color, int* avamove)
 				}
 				case 4://如果士
 				{
-					//士在左下
-					if (pr == 9 && pc == 3)
+					if (pr == 9)
 					{
-						if (curboard[8][4] <= 0)
-						{
-							avamove[arrnum++] = (9 << 12) + (3 << 8) ^ (8 << 4) ^ 4;
+						if (pc == 3) {//士在左下
+							if (curboard[8][4] <= 0){
+								avamove[arrnum++] = (9 << 12) + (3 << 8) ^ (8 << 4) ^ 4;
+							}
+						}
+						else if (pc == 5) {//士在右下
+							if (curboard[8][4] <= 0){
+								avamove[arrnum++] = (9 << 12) + (5 << 8) ^ (8 << 4) ^ 4;
+							}
 						}
 					}
-					//士在右下
-					else if (pr == 9 && pc == 5)
+					else if (pr == 7)
 					{
-						if (curboard[8][4] <= 0)
-						{
-							avamove[arrnum++] = (9 << 12) + (5 << 8) ^ (8 << 4) ^ 4;
+						if (pc == 3) {//士在左上
+							if (curboard[8][4] <= 0) {
+								avamove[arrnum++] = (7 << 12) + (3 << 8) ^ (8 << 4) ^ 4;
+							}
 						}
-					}
-					//士在左上
-					else if (pr == 7 && pc == 3)
-					{
-						if (curboard[8][4] <= 0)
-						{
-							avamove[arrnum++] = (7 << 12) + (3 << 8) ^ (8 << 4) ^ 4;
-						}
-					}
-					//士在右上
-					else if (pr == 7 && pc == 5)
-					{
-						if (curboard[8][4] <= 0)
-						{
-							avamove[arrnum++] = (7 << 12) + (5 << 8) ^ (8 << 4) ^ 4;
+						else if (pc == 5) {//士在右上
+							if (curboard[8][4] <= 0) {
+								avamove[arrnum++] = (7 << 12) + (5 << 8) ^ (8 << 4) ^ 4;
+							}
 						}
 					}
 					//士在中间，往四个方向去
-					else if (pr == 8 && pc == 4)
+					else if (pr == 8)
 					{
 						if (curboard[9][3] <= 0)
 						{
@@ -1489,372 +1464,6 @@ static int GenMove(int8_t curboard[10][9], int color, int* avamove)
 				}
 			}
 		}
-		//for (int pr = 0; pr < 10; pr++)
-		//{
-		//	for (int pc = 0; pc < 9; pc++)
-		//	{
-		//		if (curboard[pr][pc] <= 0)
-		//			continue;
-		//		if (curboard[pr][pc] == 5)//如果帅
-		//		{
-		//			//帅向上走
-		//			if (pr - 1 >= 7)
-		//			{
-		//				if (curboard[pr - 1][pc] <= 0)
-		//				{
-		//					avamove[arrnum++] = (pr << 12) ^ (pc << 8) ^ ((pr - 1) << 4) ^ pc;
-		//				}
-		//			}
-		//			//帅向下走
-		//			if (pr + 1 < 10)
-		//			{
-		//				if (curboard[pr + 1][pc] <= 0)
-		//				{
-		//					avamove[arrnum++] = (pr << 12) ^ (pc << 8) ^ ((pr + 1) << 4) ^ pc;
-		//				}
-		//			}
-		//			//帅向左走
-		//			if (pc - 1 > 2)
-		//			{
-		//				if (curboard[pr][pc - 1] <= 0)
-		//				{
-		//					avamove[arrnum++] = (pr << 12) ^ (pc << 8) ^ (pr << 4) ^ (pc - 1);
-		//				}
-		//			}
-		//			//帅向右走
-		//			if (pc + 1 < 6)
-		//			{
-		//				if (curboard[pr][pc + 1] <= 0)
-		//				{
-		//					avamove[arrnum++] = (pr << 12) ^ (pc << 8) ^ (pr << 4) ^ (pc + 1);
-		//				}
-		//			}
-		//			for (int k = 1; pr - k >= 0; k++)//将帅照脸
-		//			{
-		//				if (curboard[pr - k][pc] == -5)
-		//				{
-		//					avamove[arrnum++] = (pr << 12) ^ (pc << 8) ^ ((pr - k) << 4) ^ pc;
-		//				}
-		//				else if (curboard[pr - k][pc] != 0)
-		//				{
-		//					break;
-		//				}
-		//			}
-		//		}
-		//		else if (curboard[pr][pc] == 4)//如果士
-		//		{
-		//			//士在左下
-		//			if (pr == 9 && pc == 3)
-		//			{
-		//				if (curboard[8][4] <= 0)
-		//				{
-		//					avamove[arrnum++] = (9 << 12) + (3 << 8) ^ (8 << 4) ^ 4;
-		//				}
-		//			}
-		//			//士在右下
-		//			else if (pr == 9 && pc == 5)
-		//			{
-		//				if (curboard[8][4] <= 0)
-		//				{
-		//					avamove[arrnum++] = (9 << 12) + (5 << 8) ^ (8 << 4) ^ 4;
-		//				}
-		//			}
-		//			//士在左上
-		//			else if (pr == 7 && pc == 3)
-		//			{
-		//				if (curboard[8][4] <= 0)
-		//				{
-		//					avamove[arrnum++] = (7 << 12) + (3 << 8) ^ (8 << 4) ^ 4;
-		//				}
-		//			}
-		//			//士在右上
-		//			else if (pr == 7 && pc == 5)
-		//			{
-		//				if (curboard[8][4] <= 0)
-		//				{
-		//					avamove[arrnum++] = (7 << 12) + (5 << 8) ^ (8 << 4) ^ 4;
-		//				}
-		//			}
-		//			//士在中间，往四个方向去
-		//			else if (pr == 8 && pc == 4)
-		//			{
-		//				if (curboard[9][3] <= 0)
-		//				{
-		//					avamove[arrnum++] = (8 << 12) + (4 << 8) ^ (9 << 4) ^ 3;
-		//				}
-		//				if (curboard[9][5] <= 0)
-		//				{
-		//					avamove[arrnum++] = (8 << 12) + (4 << 8) ^ (9 << 4) ^ 5;
-		//				}
-		//				if (curboard[7][3] <= 0)
-		//				{
-		//					avamove[arrnum++] = (8 << 12) + (4 << 8) ^ (7 << 4) ^ 3;
-		//				}
-		//				if (curboard[7][5] <= 0)
-		//				{
-		//					avamove[arrnum++] = (8 << 12) + (4 << 8) ^ (7 << 4) ^ 5;
-		//				}
-		//			}
-		//		}
-		//		else if (curboard[pr][pc] == 3)//如果相
-		//		{
-		//			if (pr + 2 <= 9 && pc - 2 >= 0 && curboard[pr + 2][pc - 2] <= 0)//可以向左下飞
-		//			{
-		//				if (curboard[pr + 1][pc - 1] == 0)//不塞象眼
-		//				{
-		//					avamove[arrnum++] = (pr << 12) ^ (pc << 8) ^ ((pr + 2) << 4) ^ (pc - 2);
-		//				}
-		//			}
-		//			if (pr + 2 <= 9 && pc + 2 <= 8 && curboard[pr + 2][pc + 2] <= 0)//可以向右下飞
-		//			{
-		//				if (curboard[pr + 1][pc + 1] == 0)//不塞象眼
-		//				{
-		//					avamove[arrnum++] = (pr << 12) ^ (pc << 8) ^ ((pr + 2) << 4) ^ (pc + 2);
-		//				}
-		//			}
-		//			if (pr - 2 >= 5 && pc - 2 >= 0 && curboard[pr - 2][pc - 2] <= 0)//可以向左上飞
-		//			{
-		//				if (curboard[pr - 1][pc - 1] == 0)//不塞象眼
-		//				{
-		//					avamove[arrnum++] = (pr << 12) ^ (pc << 8) ^ ((pr - 2) << 4) ^ (pc - 2);
-		//				}
-		//			}
-		//			if (pr - 2 >= 5 && pc + 2 <= 8 && curboard[pr - 2][pc + 2] <= 0)//可以向右上飞
-		//			{
-		//				if (curboard[pr - 1][pc + 1] == 0)//不塞象眼
-		//				{
-		//					avamove[arrnum++] = (pr << 12) ^ (pc << 8) ^ ((pr - 2) << 4) ^ (pc + 2);
-		//				}
-		//			}
-		//		}
-		//		else if (curboard[pr][pc] == 2)//如果马
-		//		{
-		//			if (pr - 2 >= 0 && curboard[pr - 1][pc] == 0)//如果上面没有绊马脚
-		//			{
-		//				if (pc - 1 >= 0 && curboard[pr - 2][pc - 1] <= 0)//如果能向左上走
-		//				{
-		//					avamove[arrnum++] = (pr << 12) ^ (pc << 8) ^ ((pr - 2) << 4) ^ (pc - 1);
-		//				}
-		//				if (pc + 1 <= 8 && curboard[pr - 2][pc + 1] <= 0)//如果能向右上走
-		//				{
-		//					avamove[arrnum++] = (pr << 12) ^ (pc << 8) ^ ((pr - 2) << 4) ^ (pc + 1);
-		//				}
-		//			}
-		//			if (pr + 2 <= 9 && curboard[pr + 1][pc] == 0)//如果下面没有绊马脚
-		//			{
-		//				if (pc - 1 >= 0 && curboard[pr + 2][pc - 1] <= 0)//如果能向左下走
-		//				{
-		//					avamove[arrnum++] = (pr << 12) ^ (pc << 8) ^ ((pr + 2) << 4) ^ (pc - 1);
-		//				}
-		//				if (pc + 1 <= 8 && curboard[pr + 2][pc + 1] <= 0)//如果能向右下走
-		//				{
-		//					avamove[arrnum++] = (pr << 12) ^ (pc << 8) ^ ((pr + 2) << 4) ^ (pc + 1);
-		//				}
-		//			}
-		//			if (pc - 2 >= 0 && curboard[pr][pc - 1] == 0)//如果左面没有绊马脚
-		//			{
-		//				if (pr - 1 >= 0 && curboard[pr - 1][pc - 2] <= 0)//如果能向左上走
-		//				{
-		//					avamove[arrnum++] = (pr << 12) ^ (pc << 8) ^ ((pr - 1) << 4) ^ (pc - 2);
-		//				}
-		//				if (pr + 1 <= 9 && curboard[pr + 1][pc - 2] <= 0)//如果能向左下走
-		//				{
-		//					avamove[arrnum++] = (pr << 12) ^ (pc << 8) ^ ((pr + 1) << 4) ^ (pc - 2);
-		//				}
-		//			}
-		//			if (pc + 2 <= 8 && curboard[pr][pc + 1] == 0)//如果右面没有绊马脚
-		//			{
-		//				if (pr - 1 >= 0 && curboard[pr - 1][pc + 2] <= 0)//如果能向右上走
-		//				{
-		//					avamove[arrnum++] = (pr << 12) ^ (pc << 8) ^ ((pr - 1) << 4) ^ (pc + 2);
-		//				}
-		//				if (pr + 1 <= 9 && curboard[pr + 1][pc + 2] <= 0)//如果能向右下走
-		//				{
-		//					avamove[arrnum++] = (pr << 12) ^ (pc << 8) ^ ((pr + 1) << 4) ^ (pc + 2);
-		//				}
-		//			}
-		//		}
-		//		else if (curboard[pr][pc] == 1)//车
-		//		{
-		//			for (j = 1; pr - j >= 0; j++)//车向上走
-		//			{
-		//				if (curboard[pr - j][pc] < 0)
-		//				{
-		//					avamove[arrnum++] = (pr << 12) ^ (pc << 8) ^ ((pr - j) << 4) ^ pc;
-		//					break;
-		//				}
-		//				else if (curboard[pr - j][pc] > 0)
-		//				{
-		//					break;
-		//				}
-		//				avamove[arrnum++] = (pr << 12) ^ (pc << 8) ^ ((pr - j) << 4) ^ pc;
-		//			}
-		//			for (j = 1; pr + j <= 9; j++)//车向下走
-		//			{
-		//				if (curboard[pr + j][pc] < 0)
-		//				{
-		//					avamove[arrnum++] = (pr << 12) ^ (pc << 8) ^ ((pr + j) << 4) ^ pc;
-		//					break;
-		//				}
-		//				else if (curboard[pr + j][pc] > 0)
-		//				{
-		//					break;
-		//				}
-		//				avamove[arrnum++] = (pr << 12) ^ (pc << 8) ^ ((pr + j) << 4) ^ pc;
-		//			}
-		//			for (j = 1; pc - j >= 0; j++)//车向左走
-		//			{
-		//				if (curboard[pr][pc - j] < 0)
-		//				{
-		//					avamove[arrnum++] = (pr << 12) ^ (pc << 8) ^ (pr << 4) ^ (pc - j);
-		//					break;
-		//				}
-		//				else if (curboard[pr][pc - j] > 0)
-		//				{
-		//					break;
-		//				}
-		//				avamove[arrnum++] = (pr << 12) ^ (pc << 8) ^ (pr << 4) ^ (pc - j);
-		//			}
-		//			for (j = 1; pc + j <= 8; j++)//车向右走
-		//			{
-		//				if (curboard[pr][pc + j] < 0)
-		//				{
-		//					avamove[arrnum++] = (pr << 12) ^ (pc << 8) ^ (pr << 4) ^ (pc + j);
-		//					break;
-		//				}
-		//				else if (curboard[pr][pc + j] > 0)
-		//				{
-		//					break;
-		//				}
-		//				avamove[arrnum++] = (pr << 12) ^ (pc << 8) ^ (pr << 4) ^ (pc + j);
-		//			}
-		//		}
-		//		else if (curboard[pr][pc] == 6)//炮
-		//		{
-		//			uint8_t l;
-		//			l = 0;
-		//			for (j = 1; pr - j >= 0; j++)//炮向上走
-		//			{
-		//				if (curboard[pr - j][pc] != 0)
-		//				{
-		//					if (l == 1)
-		//					{
-		//						if (curboard[pr - j][pc] < 0)
-		//						{
-		//							avamove[arrnum++] = (pr << 12) ^ (pc << 8) ^ ((pr - j) << 4) ^ pc;
-		//						}
-		//						break;
-		//					}
-		//					l++;
-		//				}
-		//				else
-		//				{
-		//					if (l == 0)
-		//					{
-		//						avamove[arrnum++] = (pr << 12) ^ (pc << 8) ^ ((pr - j) << 4) ^ pc;
-		//					}
-		//				}
-		//				if (l > 1) break;
-		//			}
-		//			l = 0;
-		//			for (j = 1; pr + j <= 9; j++)//炮向下走
-		//			{
-		//				if (curboard[pr + j][pc] != 0)
-		//				{
-		//					if (l == 1)
-		//					{
-		//						if (curboard[pr + j][pc] < 0)
-		//						{
-		//							avamove[arrnum++] = (pr << 12) ^ (pc << 8) ^ ((pr + j) << 4) ^ pc;
-		//						}
-		//						break;
-		//					}
-		//					l++;
-		//				}
-		//				else
-		//				{
-		//					if (l == 0)
-		//					{
-		//						avamove[arrnum++] = (pr << 12) ^ (pc << 8) ^ ((pr + j) << 4) ^ pc;
-		//					}
-		//				}
-		//				if (l > 1) break;
-		//			}
-		//			l = 0;
-		//			for (j = 1; pc - j >= 0; j++)//炮向左走
-		//			{
-		//				if (curboard[pr][pc - j] != 0)
-		//				{
-		//					if (l == 1)
-		//					{
-		//						if (curboard[pr][pc - j] < 0)
-		//						{
-		//							avamove[arrnum++] = (pr << 12) ^ (pc << 8) ^ (pr << 4) ^ (pc - j);
-		//						}
-		//						break;
-		//					}
-		//					l++;
-		//				}
-		//				else
-		//				{
-		//					if (l == 0)
-		//					{
-		//						avamove[arrnum++] = (pr << 12) ^ (pc << 8) ^ (pr << 4) ^ (pc - j);
-		//					}
-		//				}
-		//				if (l > 1) break;
-		//			}
-		//			l = 0;
-		//			for (j = 1; pc + j <= 8; j++)//炮向右走
-		//			{
-		//				if (curboard[pr][pc + j] != 0)
-		//				{
-		//					if (l == 1)
-		//					{
-		//						if (curboard[pr][pc + j] < 0)
-		//						{
-		//							avamove[arrnum++] = (pr << 12) ^ (pc << 8) ^ (pr << 4) ^ (pc + j);
-		//						}
-		//						break;
-		//					}
-		//					l++;
-		//				}
-		//				else
-		//				{
-		//					if (l == 0)
-		//					{
-		//						avamove[arrnum++] = (pr << 12) ^ (pc << 8) ^ (pr << 4) ^ (pc + j);
-		//					}
-		//				}
-		//				if (l > 1) break;
-		//			}
-		//		}
-		//		else if (curboard[pr][pc] == 7)//兵
-		//		{
-		//			if (pr <= 9 && pr >= 1)//兵向上一步
-		//			{
-		//				if (curboard[pr - 1][pc] <= 0)
-		//				{
-		//					avamove[arrnum++] = (pr << 12) ^ (pc << 8) ^ ((pr - 1) << 4) ^ pc;
-		//				}
-		//			}
-		//			if (pr <= 4 && pc >= 1)//兵向左一步
-		//			{
-		//				if (curboard[pr][pc - 1] <= 0)
-		//				{
-		//					avamove[arrnum++] = (pr << 12) ^ (pc << 8) ^ (pr << 4) ^ (pc - 1);
-		//				}
-		//			}
-		//			if (pr <= 4 && pc <= 7)//兵向右一步
-		//			{
-		//				if (curboard[pr][pc + 1] <= 0)
-		//				{
-		//					avamove[arrnum++] = (pr << 12) ^ (pc << 8) ^ (pr << 4) ^ (pc + 1);
-		//				}
-		//			}
-		//		}
-		//	}
-		//}
 	}
 	else //我方黑色
 	{
@@ -1911,40 +1520,34 @@ static int GenMove(int8_t curboard[10][9], int color, int* avamove)
 				}
 				case -4:
 				{
-					//士在左下
-					if (pr == 2 && pc == 3)
+					if (pr == 2)
 					{
-						if (curboard[1][4] >= 0)
-						{
-							avamove[arrnum++] = (2 << 12) + (3 << 8) ^ (1 << 4) ^ 4;
+						if (pc == 3) {//士在左下
+							if (curboard[1][4] >= 0) {
+								avamove[arrnum++] = (2 << 12) + (3 << 8) ^ (1 << 4) ^ 4;
+							}
+						}
+						else if (pc == 5) {//士在右下
+							if (curboard[1][4] >= 0) {
+								avamove[arrnum++] = (2 << 12) + (5 << 8) ^ (1 << 4) ^ 4;
+							}
 						}
 					}
-					//士在右下
-					else if (pr == 2 && pc == 5)
+					else if (pr == 0)
 					{
-						if (curboard[1][4] >= 0)
-						{
-							avamove[arrnum++] = (2 << 12) + (5 << 8) ^ (1 << 4) ^ 4;
+						if (pc == 3) {//士在左上
+							if (curboard[1][4] >= 0) {
+								avamove[arrnum++] = (3 << 8) ^ (1 << 4) ^ 4;
+							}
 						}
-					}
-					//士在左上
-					else if (pr == 0 && pc == 3)
-					{
-						if (curboard[1][4] >= 0)
-						{
-							avamove[arrnum++] = (3 << 8) ^ (1 << 4) ^ 4;
-						}
-					}
-					//士在右上
-					else if (pr == 0 && pc == 5)
-					{
-						if (curboard[1][4] >= 0)
-						{
-							avamove[arrnum++] = (5 << 8) ^ (1 << 4) ^ 4;
+						else if (pc == 5) {//士在右上
+							if (curboard[1][4] >= 0) {
+								avamove[arrnum++] = (5 << 8) ^ (1 << 4) ^ 4;
+							}
 						}
 					}
 					//士在中间，往四个方向去
-					else if (pr == 1 && pc == 4)
+					else if (pr == 1)
 					{
 						if (curboard[2][3] >= 0)
 						{
@@ -2234,372 +1837,6 @@ static int GenMove(int8_t curboard[10][9], int color, int* avamove)
 				}
 			}
 		}
-		//for (int pr = 0; pr < 10; pr++)
-		//{
-		//	for (int pc = 0; pc < 9; pc++)
-		//	{
-		//		if (curboard[pr][pc] >= 0)
-		//			continue;
-		//		if (curboard[pr][pc] == -5)//如果将
-		//		{
-		//			//将向上走
-		//			if (pr - 1 >= 0)
-		//			{
-		//				if (curboard[pr - 1][pc] >= 0)
-		//				{
-		//					avamove[arrnum++] = (pr << 12) ^ (pc << 8) ^ ((pr - 1) << 4) ^ pc;
-		//				}
-		//			}
-		//			//将向下走
-		//			if (pr + 1 < 3)
-		//			{
-		//				if (curboard[pr + 1][pc] >= 0)
-		//				{
-		//					avamove[arrnum++] = (pr << 12) ^ (pc << 8) ^ ((pr + 1) << 4) ^ pc;
-		//				}
-		//			}
-		//			//将向左走
-		//			if (pc - 1 > 2)
-		//			{
-		//				if (curboard[pr][pc - 1] >= 0)
-		//				{
-		//					avamove[arrnum++] = (pr << 12) ^ (pc << 8) ^ (pr << 4) ^ (pc - 1);
-		//				}
-		//			}
-		//			//将向右走
-		//			if (pc + 1 < 6)
-		//			{
-		//				if (curboard[pr][pc + 1] >= 0)
-		//				{
-		//					avamove[arrnum++] = (pr << 12) ^ (pc << 8) ^ (pr << 4) ^ (pc + 1);
-		//				}
-		//			}
-		//			for (int k = 1; pr + k < 10; k++)//将帅照脸
-		//			{
-		//				if (curboard[pr + k][pc] == 5)
-		//				{
-		//					avamove[arrnum++] = (pr << 12) ^ (pc << 8) ^ ((pr + k) << 4) ^ pc;
-		//				}
-		//				else if (curboard[pr + k][pc] != 0)
-		//				{
-		//					break;
-		//				}
-		//			}
-		//		}
-		//		else if (curboard[pr][pc] == -4)
-		//		{
-		//			//士在左下
-		//			if (pr == 2 && pc == 3)
-		//			{
-		//				if (curboard[1][4] >= 0)
-		//				{
-		//					avamove[arrnum++] = (2 << 12) + (3 << 8) ^ (1 << 4) ^ 4;
-		//				}
-		//			}
-		//			//士在右下
-		//			else if (pr == 2 && pc == 5)
-		//			{
-		//				if (curboard[1][4] >= 0)
-		//				{
-		//					avamove[arrnum++] = (2 << 12) + (5 << 8) ^ (1 << 4) ^ 4;
-		//				}
-		//			}
-		//			//士在左上
-		//			else if (pr == 0 && pc == 3)
-		//			{
-		//				if (curboard[1][4] >= 0)
-		//				{
-		//					avamove[arrnum++] = (3 << 8) ^ (1 << 4) ^ 4;
-		//				}
-		//			}
-		//			//士在右上
-		//			else if (pr == 0 && pc == 5)
-		//			{
-		//				if (curboard[1][4] >= 0)
-		//				{
-		//					avamove[arrnum++] = (5 << 8) ^ (1 << 4) ^ 4;
-		//				}
-		//			}
-		//			//士在中间，往四个方向去
-		//			else if (pr == 1 && pc == 4)
-		//			{
-		//				if (curboard[2][3] >= 0)
-		//				{
-		//					avamove[arrnum++] = (1 << 12) + (4 << 8) ^ (2 << 4) ^ 3;
-		//				}
-		//				if (curboard[2][5] >= 0)
-		//				{
-		//					avamove[arrnum++] = (1 << 12) + (4 << 8) ^ (2 << 4) ^ 5;
-		//				}
-		//				if (curboard[0][3] >= 0)
-		//				{
-		//					avamove[arrnum++] = (1 << 12) + (4 << 8) ^ (0 << 4) ^ 3;
-		//				}
-		//				if (curboard[0][5] >= 0)
-		//				{
-		//					avamove[arrnum++] = (1 << 12) + (4 << 8) ^ (0 << 4) ^ 5;
-		//				}
-		//			}
-		//		}
-		//		else if (curboard[pr][pc] == -3)
-		//		{
-		//			if (pr + 2 <= 4 && pc - 2 >= 0 && curboard[pr + 2][pc - 2] >= 0)//可以向左下飞
-		//			{
-		//				if (curboard[pr + 1][pc - 1] == 0)//不塞象眼
-		//				{
-		//					avamove[arrnum++] = (pr << 12) ^ (pc << 8) ^ ((pr + 2) << 4) ^ (pc - 2);
-		//				}
-		//			}
-		//			if (pr + 2 <= 4 && pc + 2 <= 8 && curboard[pr + 2][pc + 2] >= 0)//可以向右下飞
-		//			{
-		//				if (curboard[pr + 1][pc + 1] == 0)//不塞象眼
-		//				{
-		//					avamove[arrnum++] = (pr << 12) ^ (pc << 8) ^ ((pr + 2) << 4) ^ (pc + 2);
-		//				}
-		//			}
-		//			if (pr - 2 >= 0 && pc - 2 >= 0 && curboard[pr - 2][pc - 2] >= 0)//可以向左上飞
-		//			{
-		//				if (curboard[pr - 1][pc - 1] == 0)//不塞象眼
-		//				{
-		//					avamove[arrnum++] = (pr << 12) ^ (pc << 8) ^ ((pr - 2) << 4) ^ (pc - 2);
-		//				}
-		//			}
-		//			if (pr - 2 >= 0 && pc + 2 <= 8 && curboard[pr - 2][pc + 2] >= 0)//可以向右上飞
-		//			{
-		//				if (curboard[pr - 1][pc + 1] == 0)//不塞象眼
-		//				{
-		//					avamove[arrnum++] = (pr << 12) ^ (pc << 8) ^ ((pr - 2) << 4) ^ (pc + 2);
-		//				}
-		//			}
-		//		}
-		//		else if (curboard[pr][pc] == -2)
-		//		{
-		//			if (pr - 2 >= 0 && curboard[pr - 1][pc] == 0)//如果上面没有绊马脚
-		//			{
-		//				if (pc - 1 >= 0 && curboard[pr - 2][pc - 1] >= 0)//如果能向左上走
-		//				{
-		//					avamove[arrnum++] = (pr << 12) ^ (pc << 8) ^ ((pr - 2) << 4) ^ (pc - 1);
-		//				}
-		//				if (pc + 1 <= 8 && curboard[pr - 2][pc + 1] >= 0)//如果能向右上走
-		//				{
-		//					avamove[arrnum++] = (pr << 12) ^ (pc << 8) ^ ((pr - 2) << 4) ^ (pc + 1);
-		//				}
-		//			}
-		//			if (pr + 2 <= 9 && curboard[pr + 1][pc] == 0)//如果下面没有绊马脚
-		//			{
-		//				if (pc - 1 >= 0 && curboard[pr + 2][pc - 1] >= 0)//如果能向左下走
-		//				{
-		//					avamove[arrnum++] = (pr << 12) ^ (pc << 8) ^ ((pr + 2) << 4) ^ (pc - 1);
-		//				}
-		//				if (pc + 1 <= 8 && curboard[pr + 2][pc + 1] >= 0)//如果能向右下走
-		//				{
-		//					avamove[arrnum++] = (pr << 12) ^ (pc << 8) ^ ((pr + 2) << 4) ^ (pc + 1);
-		//				}
-		//			}
-		//			if (pc - 2 >= 0 && curboard[pr][pc - 1] == 0)//如果左面没有绊马脚
-		//			{
-		//				if (pr - 1 >= 0 && curboard[pr - 1][pc - 2] >= 0)//如果能向左上走
-		//				{
-		//					avamove[arrnum++] = (pr << 12) ^ (pc << 8) ^ ((pr - 1) << 4) ^ (pc - 2);
-		//				}
-		//				if (pr + 1 <= 9 && curboard[pr + 1][pc - 2] >= 0)//如果能向左下走
-		//				{
-		//					avamove[arrnum++] = (pr << 12) ^ (pc << 8) ^ ((pr + 1) << 4) ^ (pc - 2);
-		//				}
-		//			}
-		//			if (pc + 2 <= 8 && curboard[pr][pc + 1] == 0)//如果右面没有绊马脚
-		//			{
-		//				if (pr - 1 >= 0 && curboard[pr - 1][pc + 2] >= 0)//如果能向右上走
-		//				{
-		//					avamove[arrnum++] = (pr << 12) ^ (pc << 8) ^ ((pr - 1) << 4) ^ (pc + 2);
-		//				}
-		//				if (pr + 1 <= 9 && curboard[pr + 1][pc + 2] >= 0)//如果能向右下走
-		//				{
-		//					avamove[arrnum++] = (pr << 12) ^ (pc << 8) ^ ((pr + 1) << 4) ^ (pc + 2);
-		//				}
-		//			}
-		//		}
-		//		else if (curboard[pr][pc] == -1)
-		//		{
-		//			for (j = 1; pr - j >= 0; j++)//车向上走
-		//			{
-		//				if (curboard[pr - j][pc] > 0)
-		//				{
-		//					avamove[arrnum++] = (pr << 12) ^ (pc << 8) ^ ((pr - j) << 4) ^ pc;
-		//					break;
-		//				}
-		//				else if (curboard[pr - j][pc] < 0)
-		//				{
-		//					break;
-		//				}
-		//				avamove[arrnum++] = (pr << 12) ^ (pc << 8) ^ ((pr - j) << 4) ^ pc;
-		//			}
-		//			for (j = 1; pr + j <= 9; j++)//车向下走
-		//			{
-		//				if (curboard[pr + j][pc] > 0)
-		//				{
-		//					avamove[arrnum++] = (pr << 12) ^ (pc << 8) ^ ((pr + j) << 4) ^ pc;
-		//					break;
-		//				}
-		//				else if (curboard[pr + j][pc] < 0)
-		//				{
-		//					break;
-		//				}
-		//				avamove[arrnum++] = (pr << 12) ^ (pc << 8) ^ ((pr + j) << 4) ^ pc;
-		//			}
-		//			for (j = 1; pc - j >= 0; j++)//车向左走
-		//			{
-		//				if (curboard[pr][pc - j] > 0)
-		//				{
-		//					avamove[arrnum++] = (pr << 12) ^ (pc << 8) ^ (pr << 4) ^ (pc - j);
-		//					break;
-		//				}
-		//				else if (curboard[pr][pc - j] < 0)
-		//				{
-		//					break;
-		//				}
-		//				avamove[arrnum++] = (pr << 12) ^ (pc << 8) ^ (pr << 4) ^ (pc - j);
-		//			}
-		//			for (j = 1; pc + j <= 8; j++)//车向右走
-		//			{
-		//				if (curboard[pr][pc + j] > 0)
-		//				{
-		//					avamove[arrnum++] = (pr << 12) ^ (pc << 8) ^ (pr << 4) ^ (pc + j);
-		//					break;
-		//				}
-		//				else if (curboard[pr][pc + j] < 0)
-		//				{
-		//					break;
-		//				}
-		//				avamove[arrnum++] = (pr << 12) ^ (pc << 8) ^ (pr << 4) ^ (pc + j);
-		//			}
-		//		}
-		//		else if (curboard[pr][pc] == -6)
-		//		{
-		//			uint8_t l;
-		//			l = 0;
-		//			for (j = 1; pr - j >= 0; j++)//炮向上走
-		//			{
-		//				if (curboard[pr - j][pc] != 0)
-		//				{
-		//					if (l == 1)
-		//					{
-		//						if (curboard[pr - j][pc] > 0)
-		//						{
-		//							avamove[arrnum++] = (pr << 12) ^ (pc << 8) ^ ((pr - j) << 4) ^ pc;
-		//						}
-		//						break;
-		//					}
-		//					l++;
-		//				}
-		//				else
-		//				{
-		//					if (l == 0)
-		//					{
-		//						avamove[arrnum++] = (pr << 12) ^ (pc << 8) ^ ((pr - j) << 4) ^ pc;
-		//					}
-		//				}
-		//				if (l > 1) break;
-		//			}
-		//			l = 0;
-		//			for (j = 1; pr + j <= 9; j++)//炮向下走
-		//			{
-		//				if (curboard[pr + j][pc] != 0)
-		//				{
-		//					if (l == 1)
-		//					{
-		//						if (curboard[pr + j][pc] > 0)
-		//						{
-		//							avamove[arrnum++] = (pr << 12) ^ (pc << 8) ^ ((pr + j) << 4) ^ pc;
-		//						}
-		//						break;
-		//					}
-		//					l++;
-		//				}
-		//				else
-		//				{
-		//					if (l == 0)
-		//					{
-		//						avamove[arrnum++] = (pr << 12) ^ (pc << 8) ^ ((pr + j) << 4) ^ pc;
-		//					}
-		//				}
-		//				if (l > 1) break;
-		//			}
-		//			l = 0;
-		//			for (j = 1; pc - j >= 0; j++)//炮向左走
-		//			{
-		//				if (curboard[pr][pc - j] != 0)
-		//				{
-		//					if (l == 1)
-		//					{
-		//						if (curboard[pr][pc - j] > 0)
-		//						{
-		//							avamove[arrnum++] = (pr << 12) ^ (pc << 8) ^ (pr << 4) ^ (pc - j);
-		//						}
-		//						break;
-		//					}
-		//					l++;
-		//				}
-		//				else
-		//				{
-		//					if (l == 0)
-		//					{
-		//						avamove[arrnum++] = (pr << 12) ^ (pc << 8) ^ (pr << 4) ^ (pc - j);
-		//					}
-		//				}
-		//				if (l > 1) break;
-		//			}
-		//			l = 0;
-		//			for (j = 1; pc + j <= 8; j++)//炮向右走
-		//			{
-		//				if (curboard[pr][pc + j] != 0)
-		//				{
-		//					if (l == 1)
-		//					{
-		//						if (curboard[pr][pc + j] > 0)
-		//						{
-		//							avamove[arrnum++] = (pr << 12) ^ (pc << 8) ^ (pr << 4) ^ (pc + j);
-		//						}
-		//						break;
-		//					}
-		//					l++;
-		//				}
-		//				else
-		//				{
-		//					if (l == 0)
-		//					{
-		//						avamove[arrnum++] = (pr << 12) ^ (pc << 8) ^ (pr << 4) ^ (pc + j);
-		//					}
-		//				}
-		//				if (l > 1) break;
-		//			}
-		//		}
-		//		else if (curboard[pr][pc] == -7)
-		//		{
-		//			if (pr <= 8 && pr >= 0)//兵向下一步
-		//			{
-		//				if (curboard[pr + 1][pc] >= 0)
-		//				{
-		//					avamove[arrnum++] = (pr << 12) ^ (pc << 8) ^ ((pr + 1) << 4) ^ pc;
-		//				}
-		//			}
-		//			if (pr >= 5 && pc >= 1)//兵向左一步
-		//			{
-		//				if (curboard[pr][pc - 1] >= 0)
-		//				{
-		//					avamove[arrnum++] = (pr << 12) ^ (pc << 8) ^ (pr << 4) ^ (pc - 1);
-		//				}
-		//			}
-		//			if (pr >= 5 && pc <= 7)//兵向右一步
-		//			{
-		//				if (curboard[pr][pc + 1] >= 0)
-		//				{
-		//					avamove[arrnum++] = (pr << 12) ^ (pc << 8) ^ (pr << 4) ^ (pc + 1);
-		//				}
-		//			}
-		//		}
-		//	}
-		//}
 	}
 	return arrnum;
 }
@@ -2610,8 +1847,12 @@ static int valuate(int8_t curboard[10][9], int color, uint8_t absDepth)//红黑�
 	//说明：空0车1马2相3士4将5炮6兵7，pr = piece row 棋子在第几行，pc = piece colom 棋子在第几列，一切坐标以我方为红的视角
 	int curscore = 0;
 	//每种棋子的数量，顺序： 车 马 象 士 将 炮 兵
-	int br_num = 0, bn_num = 0, bb_num = 0, ba_num = 0, bk_num = 0, bc_num = 0, bp_num = 0,
-		rr_num = 0, rn_num = 0, rb_num = 0, ra_num = 0, rk_num = 0, rc_num = 0, rp_num = 0;
+	int br_num = global_piece_num[-1 + 7], bn_num = global_piece_num[-2 + 7], 
+		bb_num = global_piece_num[-3 + 7], ba_num = global_piece_num[-4 + 7], 
+		bc_num = global_piece_num[-6 + 7], bp_num = global_piece_num[-7 + 7],
+		rr_num = global_piece_num[1 + 7], rn_num = global_piece_num[2 + 7], 
+		rb_num = global_piece_num[3 + 7], ra_num = global_piece_num[4 + 7], 
+		rc_num = global_piece_num[6 + 7], rp_num = global_piece_num[7 + 7];
 	int blackmovenum = 0, redmovenum = 0; //双方能走的棋的数量
 	//保存棋子攻击的点位
 	bool red_big_attack_pos[90] {};
@@ -2696,8 +1937,7 @@ static int valuate(int8_t curboard[10][9], int color, uint8_t absDepth)//红黑�
 				}
 				blackmovenum += num;
 				curscore = curscore - num * ROOK_FLEXIBILTY;
-				curscore -= pos_var[1][pc * 10 + pr];
-				br_num++;
+				curscore -= rook_pos_var[pc * 10 + pr];
 				break;
 			}
 			case -2:
@@ -2760,8 +2000,7 @@ static int valuate(int8_t curboard[10][9], int color, uint8_t absDepth)//红黑�
 				}
 				blackmovenum += num;
 				curscore -= num * KNIGHT_FLEXIBILTY;
-				curscore -= pos_var[2][pc * 10 + pr];
-				bn_num++;
+				curscore -= knight_pos_var[pc * 10 + pr];
 				break;
 			}
 			case -3:
@@ -2811,9 +2050,8 @@ static int valuate(int8_t curboard[10][9], int color, uint8_t absDepth)//红黑�
 						curscore += 10; // 象眼被塞住要扣分
 				}
 				blackmovenum += num;
-				curscore -= pos_var[3][pc * 10 + pr];
+				curscore -= bishop_pos_var[pc * 10 + pr];
 				curscore -= num * BISHOP_FLEXIBILTY;
-				bb_num++;
 				break;
 			}
 			case -4:
@@ -2856,8 +2094,7 @@ static int valuate(int8_t curboard[10][9], int color, uint8_t absDepth)//红黑�
 				}
 				blackmovenum += num;
 				curscore -= num * ASSISTANT_FLEXIBILTY;
-				curscore -= pos_var[4][pc * 10 + pr];
-				ba_num++;
+				curscore -= assistant_pos_var[pc * 10 + pr];
 				break;
 			}
 			case -5:
@@ -2914,7 +2151,7 @@ static int valuate(int8_t curboard[10][9], int color, uint8_t absDepth)//红黑�
 						black_king_attack_pos[pr + k - 7][pc - 3] = true;
 				}
 				blackmovenum += num;
-				curscore -= pos_var[5][pc * 10 + pr];
+				curscore -= king_pos_var[pc * 10 + pr];
 				break;
 			}
 			case -6:
@@ -2997,8 +2234,7 @@ static int valuate(int8_t curboard[10][9], int color, uint8_t absDepth)//红黑�
 				}
 				blackmovenum += num;
 				curscore -= num * CANNON_FLEXIBILTY;
-				curscore -= pos_var[6][pc * 10 + pr];
-				bc_num++;
+				curscore -= cannon_pos_var[pc * 10 + pr];
 
 				break;
 			}
@@ -3038,9 +2274,8 @@ static int valuate(int8_t curboard[10][9], int color, uint8_t absDepth)//红黑�
 				curscore -= num * PAWN_FLEXIBILTY;
 				if (pc != 8)
 					if (curboard[pr][pc + 1] == -7)
-						curscore -= 15; //两个小兵手拉手时要加分
-				curscore -= pos_var[7][pc * 10 + pr];
-				bp_num++;
+						curscore -= 25; //两个小兵手拉手时要加分
+				curscore -= pawn_pos_var[pc * 10 + pr];
 				break;
 			}
 			case 1:
@@ -3095,8 +2330,7 @@ static int valuate(int8_t curboard[10][9], int color, uint8_t absDepth)//红黑�
 				}
 				redmovenum += num;
 				curscore = curscore + num * ROOK_FLEXIBILTY;
-				curscore += pos_var[1][pc * 10 + 9 - pr];
-				rr_num++;
+				curscore += rook_pos_var[pc * 10 + 9 - pr];
 				break;
 			}
 			case 2:
@@ -3159,8 +2393,7 @@ static int valuate(int8_t curboard[10][9], int color, uint8_t absDepth)//红黑�
 				}
 				redmovenum += num;
 				curscore += num * KNIGHT_FLEXIBILTY;
-				curscore += pos_var[1][pc * 10 + 9 - pr];
-				rn_num++;
+				curscore += knight_pos_var[pc * 10 + 9 - pr];
 				break;
 			}
 			case 3:
@@ -3211,9 +2444,8 @@ static int valuate(int8_t curboard[10][9], int color, uint8_t absDepth)//红黑�
 						curscore -= 10; // 象眼被塞住要扣分
 				}
 				redmovenum += num;
-				curscore += pos_var[3][pc * 10 + 9 - pr];
+				curscore += bishop_pos_var[pc * 10 + 9 - pr];
 				curscore += num * BISHOP_FLEXIBILTY;
-				rb_num++;
 				break;
 			}
 			case 4:
@@ -3268,8 +2500,7 @@ static int valuate(int8_t curboard[10][9], int color, uint8_t absDepth)//红黑�
 				}
 				redmovenum += num;
 				curscore += num * ASSISTANT_FLEXIBILTY;
-				curscore += pos_var[4][pc * 10 + 9 - pr];
-				ra_num++;
+				curscore += assistant_pos_var[pc * 10 + 9 - pr];
 				break;
 			}
 			case 5:
@@ -3326,7 +2557,7 @@ static int valuate(int8_t curboard[10][9], int color, uint8_t absDepth)//红黑�
 						red_king_attack_pos[pr - k][pc - 3] = true;
 				}
 				redmovenum += num;
-				curscore += pos_var[5][pc * 10 + 9 - pr];
+				curscore += king_pos_var[pc * 10 + 9 - pr];
 				break;
 			}
 			case 6:
@@ -3421,8 +2652,7 @@ static int valuate(int8_t curboard[10][9], int color, uint8_t absDepth)//红黑�
 				}
 				redmovenum += num;
 				curscore += num * CANNON_FLEXIBILTY;
-				curscore += pos_var[6][pc * 10 + 9 - pr];
-				rc_num++;
+				curscore += cannon_pos_var[pc * 10 + 9 - pr];
 				break;
 			}
 			case 7:
@@ -3461,9 +2691,8 @@ static int valuate(int8_t curboard[10][9], int color, uint8_t absDepth)//红黑�
 				curscore += num * PAWN_FLEXIBILTY;
 				if (pc != 8)
 					if (curboard[pr][pc + 1] == 7)
-						curscore += 15; //两个小兵手拉手时要加分
-				curscore += pos_var[7][pc * 10 + 9 - pr];
-				rp_num++;
+						curscore += 25; //两个小兵手拉手时要加分
+				curscore += pawn_pos_var[pc * 10 + 9 - pr];
 				break;
 			}
 			default:
@@ -3538,7 +2767,7 @@ static int valuate(int8_t curboard[10][9], int color, uint8_t absDepth)//红黑�
 
 				// 残局以后兵
 				if (piece_weight_num <= 22) {
-					curscore += (rp_num - bp_num) * 20;
+					curscore += (rp_num - bp_num) * 25;
 				}
 			}
 		}
@@ -3552,12 +2781,12 @@ static int valuate(int8_t curboard[10][9], int color, uint8_t absDepth)//红黑�
 		(rb_num - bb_num) * 160 +
 		(rn_num - bn_num) * 470 +
 		(rr_num - br_num) * 1250 + 
-		 ((rb_num > 1) ? 10 : 0)
-		- ((bb_num > 1) ? 10 : 0)
-		+ ((ra_num > 1) ? 10 : 0)
-		- ((ba_num > 1) ? 10 : 0)
-		+ ((ra_num + rb_num >= 4) ? 10 : 0)
-		- ((ba_num + bb_num >= 4) ? 10 : 0);
+		 ((rb_num > 1) ? 12 : 0)
+		- ((bb_num > 1) ? 12 : 0)
+		+ ((ra_num > 1) ? 12 : 0)
+		- ((ba_num > 1) ? 12 : 0)
+		+ ((ra_num + rb_num >= 4) ? 13 : 0)
+		- ((ba_num + bb_num >= 4) ? 13 : 0);
 
 	//（被对方牵制、被自己保护的情况）车马炮在另一方攻击点上要扣分，以及考虑到是否处在自己的保护位置上（要加分）， 三个for分别从上到下为：车、马、炮、相、士、兵
 	if (color == 1) {
@@ -4618,12 +3847,12 @@ static void print_pv_search(HashTable* H, uint64_t hash_value, int8_t curboard[1
 		curscore = -query_pv(H, curboard_hash, curboard, -color, depth);
 		curboard[s1][s2] = curboard[s3][s4];
 		curboard[s3][s4] = pieceOld;
-		if (curscore > maxscore) {
+		if (curscore >= maxscore) {
 			maxscore = curscore;
 			bestmove = curavamove[i];
 		}
 	}
-	if (maxscore > -30000 && bestmove != -1 && depth >= 0) {
+	if (maxscore >= -30000 && bestmove != -1 && depth >= 0) {
 		int8_t s1 = bestmove >> 12 & 0b1111, s2 = bestmove >> 8 & 0b1111, s3 = bestmove >> 4 & 0b1111, s4 = bestmove & 0b1111;
 		printf(" %d%d%d%d", s1, s2, s3, s4);
 		int pieceOld = curboard[s3][s4];
@@ -4685,7 +3914,7 @@ static int quiesearch_eat(HashTable* H, uint64_t hash_value, int8_t curboard[10]
 	for (int i = 0; i < arrnum; i++)
 	{
 		int8_t s1 = curavamove[i] >> 12 & 0b1111, s2 = curavamove[i] >> 8 & 0b1111, s3 = curavamove[i] >> 4 & 0b1111, s4 = curavamove[i] & 0b1111;
-		int pieceOld = curboard[s3][s4], pieceOld_global = global_board[s3][s4];
+		int pieceOld = curboard[s3][s4], pieceOld_global = global_board[s3][s4]; global_piece_num[pieceOld + 7]--;
 
 		curboard[s3][s4] = curboard[s1][s2];	global_board[s3][s4] = global_board[s1][s2];
 		curboard[s1][s2] = 0;					global_board[s1][s2] = 0;
@@ -4713,7 +3942,7 @@ static int quiesearch_eat(HashTable* H, uint64_t hash_value, int8_t curboard[10]
 		}
 		qsearchEatRestoreBoard:
 		curboard[s1][s2] = curboard[s3][s4];	global_board[s1][s2] = global_board[s3][s4];
-		curboard[s3][s4] = pieceOld;				global_board[s3][s4] = pieceOld_global;
+		curboard[s3][s4] = pieceOld;				global_board[s3][s4] = pieceOld_global; global_piece_num[pieceOld + 7]++;
 		global_piece_pos[global_board[s1][s2]][0] = s1; global_piece_pos[global_board[s1][s2]][1] = s2;
 		global_piece_pos[pieceOld_global][0] = s3; global_piece_pos[pieceOld_global][1] = s4;
 
@@ -4770,7 +3999,7 @@ static int quiesearch_check(HashTable* H, uint64_t hash_value, int8_t curboard[1
 	for (int i = 0; i < arrnum; i++)
 	{
 		int8_t s1 = curavamove[i] >> 12 & 0b1111, s2 = curavamove[i] >> 8 & 0b1111, s3 = curavamove[i] >> 4 & 0b1111, s4 = curavamove[i] & 0b1111;
-		int pieceOld = curboard[s3][s4], pieceOld_global = global_board[s3][s4];
+		int pieceOld = curboard[s3][s4], pieceOld_global = global_board[s3][s4]; global_piece_num[pieceOld + 7]--;
 
 		curboard[s3][s4] = curboard[s1][s2];	global_board[s3][s4] = global_board[s1][s2];
 		curboard[s1][s2] = 0;					global_board[s1][s2] = 0;
@@ -4793,7 +4022,7 @@ static int quiesearch_check(HashTable* H, uint64_t hash_value, int8_t curboard[1
 		curscore = -quiesearch_eat(H, curboard_hash, curboard, -color, quiesearch_depth, absDepth + 1, -beta, -alpha);
 		qsearchCheckRestoreBoard:
 		curboard[s1][s2] = curboard[s3][s4];	global_board[s1][s2] = global_board[s3][s4];
-		curboard[s3][s4] = pieceOld;				global_board[s3][s4] = pieceOld_global;
+		curboard[s3][s4] = pieceOld;				global_board[s3][s4] = pieceOld_global; global_piece_num[pieceOld + 7]++;
 		global_piece_pos[global_board[s1][s2]][0] = s1; global_piece_pos[global_board[s1][s2]][1] = s2;
 		global_piece_pos[pieceOld_global][0] = s3; global_piece_pos[pieceOld_global][1] = s4;
 
@@ -4837,7 +4066,7 @@ static int nullmove_quiesearch(int8_t curboard[10][9], int color, int8_t depth, 
 	for (int i = 0; i < arrnum; i++)
 	{
 		int8_t s1 = curavamove[i] >> 12 & 0b1111, s2 = curavamove[i] >> 8 & 0b1111, s3 = curavamove[i] >> 4 & 0b1111, s4 = curavamove[i] & 0b1111;
-		int pieceOld = curboard[s3][s4], pieceOld_global = global_board[s3][s4];
+		int pieceOld = curboard[s3][s4], pieceOld_global = global_board[s3][s4]; global_piece_num[pieceOld + 7]--;
 
 		curboard[s3][s4] = curboard[s1][s2];	global_board[s3][s4] = global_board[s1][s2];
 		curboard[s1][s2] = 0;					global_board[s1][s2] = 0;
@@ -4847,7 +4076,7 @@ static int nullmove_quiesearch(int8_t curboard[10][9], int color, int8_t depth, 
 		curscore = -nullmove_quiesearch(curboard, -color, depth - 1, -beta, -alpha); //递归
 
 		curboard[s1][s2] = curboard[s3][s4];	global_board[s1][s2] = global_board[s3][s4];
-		curboard[s3][s4] = pieceOld;				global_board[s3][s4] = pieceOld_global;
+		curboard[s3][s4] = pieceOld;				global_board[s3][s4] = pieceOld_global; global_piece_num[pieceOld + 7]++;
 		global_piece_pos[global_board[s1][s2]][0] = s1; global_piece_pos[global_board[s1][s2]][1] = s2;
 		global_piece_pos[pieceOld_global][0] = s3; global_piece_pos[pieceOld_global][1] = s4;
 
@@ -4892,7 +4121,7 @@ static int nullmove_search(int8_t curboard[10][9], int color, int8_t depth, int 
 		for (int i = 0; i < arrnum; i++)
 		{
 			int8_t s1 = curavamove[i] >> 12 & 0b1111, s2 = curavamove[i] >> 8 & 0b1111, s3 = curavamove[i] >> 4 & 0b1111, s4 = curavamove[i] & 0b1111;
-			int pieceOld = curboard[s3][s4], pieceOld_global = global_board[s3][s4];
+			int pieceOld = curboard[s3][s4], pieceOld_global = global_board[s3][s4]; global_piece_num[pieceOld + 7]--;
 
 			curboard[s3][s4] = curboard[s1][s2];	global_board[s3][s4] = global_board[s1][s2];
 			curboard[s1][s2] = 0;					global_board[s1][s2] = 0;
@@ -4900,7 +4129,7 @@ static int nullmove_search(int8_t curboard[10][9], int color, int8_t depth, int 
 			global_piece_pos[pieceOld_global][0] = -1; global_piece_pos[pieceOld_global][1] = -1;
 			curscore = -valuate(curboard, -color, 0); //（启发函数）
 			curboard[s1][s2] = curboard[s3][s4];	global_board[s1][s2] = global_board[s3][s4];
-			curboard[s3][s4] = pieceOld;				global_board[s3][s4] = pieceOld_global;
+			curboard[s3][s4] = pieceOld;				global_board[s3][s4] = pieceOld_global; global_piece_num[pieceOld + 7]++;
 			global_piece_pos[global_board[s1][s2]][0] = s1; global_piece_pos[global_board[s1][s2]][1] = s2;
 			global_piece_pos[pieceOld_global][0] = s3; global_piece_pos[pieceOld_global][1] = s4;
 
@@ -4915,7 +4144,7 @@ static int nullmove_search(int8_t curboard[10][9], int color, int8_t depth, int 
 	for (int i = 0; i < arrnum; i++)
 	{
 		int8_t s1 = curavamove[i] >> 12 & 0b1111, s2 = curavamove[i] >> 8 & 0b1111, s3 = curavamove[i] >> 4 & 0b1111, s4 = curavamove[i] & 0b1111;
-		int pieceOld = curboard[s3][s4], pieceOld_global = global_board[s3][s4];
+		int pieceOld = curboard[s3][s4], pieceOld_global = global_board[s3][s4]; global_piece_num[pieceOld + 7]--;
 
 		curboard[s3][s4] = curboard[s1][s2];	global_board[s3][s4] = global_board[s1][s2];
 		curboard[s1][s2] = 0;					global_board[s1][s2] = 0;
@@ -4930,7 +4159,7 @@ static int nullmove_search(int8_t curboard[10][9], int color, int8_t depth, int 
 		else
 			curscore = -nullmove_search(curboard, -color, depth - 1, -beta, -alpha); //递归
 		curboard[s1][s2] = curboard[s3][s4];	global_board[s1][s2] = global_board[s3][s4];
-		curboard[s3][s4] = pieceOld;				global_board[s3][s4] = pieceOld_global;
+		curboard[s3][s4] = pieceOld;				global_board[s3][s4] = pieceOld_global; global_piece_num[pieceOld + 7]++;
 		global_piece_pos[global_board[s1][s2]][0] = s1; global_piece_pos[global_board[s1][s2]][1] = s2;
 		global_piece_pos[pieceOld_global][0] = s3; global_piece_pos[pieceOld_global][1] = s4;
 
@@ -4962,8 +4191,8 @@ static int maxmin(HashTable* H, uint64_t hash_value, int8_t curboard[10][9], int
 					return hashback_value;
 			}
 		}
-		if (hashback_depth >= 3 && hashback_depth == depth - 1 && hashback_value >= beta + min(192 + 32 * depth, 1200)) // futility pruning
-			return hashback_value;
+		//if (hashback_depth >= 3 && hashback_depth == depth - 1 && hashback_value >= beta + min(192 + 32 * depth, 1200)) // futility pruning
+		//	return hashback_value;
 	}
 
 	// 如果能直接吃对方将，则直接返回(30000 - absDepth)
@@ -4988,10 +4217,23 @@ static int maxmin(HashTable* H, uint64_t hash_value, int8_t curboard[10][9], int
 		return -(30000 - absDepth);
 	}
 
-	// NULL MOVE SEARCH
-	if (beta >= -29900 && depth >= 4 && arrnum >= 4 && !meChecked)
+	// NULL MOVE PRUNING
+	int br_num = global_piece_num[-1 + 7], bn_num = global_piece_num[-2 + 7],
+		bb_num = global_piece_num[-3 + 7], ba_num = global_piece_num[-4 + 7],
+		bc_num = global_piece_num[-6 + 7], bp_num = global_piece_num[-7 + 7],
+		rr_num = global_piece_num[1 + 7], rn_num = global_piece_num[2 + 7],
+		rb_num = global_piece_num[3 + 7], ra_num = global_piece_num[4 + 7],
+		rc_num = global_piece_num[6 + 7], rp_num = global_piece_num[7 + 7];
+	int piece_weight_num =
+		(rp_num + bp_num) * 1 +
+		(rc_num + bc_num) * 3 +
+		(ra_num + ba_num) * 1 +
+		(rb_num + bb_num) * 1 +
+		(rn_num + bn_num) * 3 +
+		(rr_num + br_num) * 6;
+	if (beta >= -29900 && depth >= 4 && piece_weight_num > 18 && !meChecked)
 	{
-		int nullmove_score = -nullmove_search(curboard, -color, min(depth - 2, 6), -beta, -alpha); // 空步剪裁
+		int nullmove_score = -nullmove_search(curboard, -color, min(depth - 2 - (depth - 4) / 3, 7), -beta, -alpha); // 空步剪裁
 		if (nullmove_score >= beta)
 			return nullmove_score;
 	}
@@ -5003,7 +4245,7 @@ static int maxmin(HashTable* H, uint64_t hash_value, int8_t curboard[10][9], int
 		for (int i = 0; i < arrnum; i++)
 		{
 			int8_t s1 = curavamove[i] >> 12 & 0b1111, s2 = curavamove[i] >> 8 & 0b1111, s3 = curavamove[i] >> 4 & 0b1111, s4 = curavamove[i] & 0b1111;
-			int pieceOld = curboard[s3][s4], pieceOld_global = global_board[s3][s4];
+			int pieceOld = curboard[s3][s4], pieceOld_global = global_board[s3][s4]; global_piece_num[pieceOld + 7]--;
 
 			curboard[s3][s4] = curboard[s1][s2];	global_board[s3][s4] = global_board[s1][s2];
 			curboard[s1][s2] = 0;					global_board[s1][s2] = 0;
@@ -5013,7 +4255,7 @@ static int maxmin(HashTable* H, uint64_t hash_value, int8_t curboard[10][9], int
 			uint64_t curboard_hash = get_curboard_Zobrist_hash(curboard, color, hash_value, s1, s2, s3, s4, pieceOld);
 			curscorearr[i] = curscore = -presearch(H, curboard_hash, curboard, -color, depth, absDepth + 1); //（启发搜索、哈希排序）
 			curboard[s1][s2] = curboard[s3][s4];	global_board[s1][s2] = global_board[s3][s4];
-			curboard[s3][s4] = pieceOld;				global_board[s3][s4] = pieceOld_global;
+			curboard[s3][s4] = pieceOld;				global_board[s3][s4] = pieceOld_global; global_piece_num[pieceOld + 7]++;
 			global_piece_pos[global_board[s1][s2]][0] = s1; global_piece_pos[global_board[s1][s2]][1] = s2;
 			global_piece_pos[pieceOld_global][0] = s3; global_piece_pos[pieceOld_global][1] = s4;
 		}
@@ -5027,7 +4269,7 @@ static int maxmin(HashTable* H, uint64_t hash_value, int8_t curboard[10][9], int
 	for (int i = 0; i < arrnum; i++)
 	{
 		int8_t s1 = curavamove[i] >> 12 & 0b1111, s2 = curavamove[i] >> 8 & 0b1111, s3 = curavamove[i] >> 4 & 0b1111, s4 = curavamove[i] & 0b1111;
-		int pieceOld = curboard[s3][s4], pieceOld_global = global_board[s3][s4];
+		int pieceOld = curboard[s3][s4], pieceOld_global = global_board[s3][s4]; global_piece_num[pieceOld + 7]--;
 
 		curboard[s3][s4] = curboard[s1][s2];	global_board[s3][s4] = global_board[s1][s2];
 		curboard[s1][s2] = 0;					global_board[s1][s2] = 0;
@@ -5062,6 +4304,16 @@ static int maxmin(HashTable* H, uint64_t hash_value, int8_t curboard[10][9], int
 			}
 		}
 		else {
+			int reduce_depth = 0; // Late Move Reductions (LMR, 延迟走法削减)
+			//if (depth >= 5 && i > 1) {
+			//	int arrnum_threshold = (int)round(arrnum * 0.7);
+			//	if (i < arrnum_threshold) reduce_depth = 1 + (depth - 5) / 2;
+			//	else if (i >= arrnum_threshold) reduce_depth = 2 + (depth - 5) / 2;
+			//}
+			if (depth >= 5 && i > 1) {
+				reduce_depth = 1;
+			}
+
 			bool OppnentChecked = (color == -1) ? wcheck(curboard) : bcheck(curboard);
 			engHistoryhashBoardList[absDepth] = curboard_hash;
 			engHistoryCheckList[absDepth] = OppnentChecked;
@@ -5074,12 +4326,13 @@ static int maxmin(HashTable* H, uint64_t hash_value, int8_t curboard[10][9], int
 					goto maxminRestoreBoard;
 				}
 			}
-			curscore = -maxmin(H, curboard_hash, curboard, -color, depth - 1, absDepth + 1, -beta, -alpha, OppnentChecked);
-
+			curscore = -maxmin(H, curboard_hash, curboard, -color, depth - reduce_depth - 1, absDepth + 1, -beta, -alpha, OppnentChecked);
+			if (curscore > alpha)
+				curscore = -maxmin(H, curboard_hash, curboard, -color, depth - 1, absDepth + 1, -beta, -alpha, OppnentChecked);
 		}
 maxminRestoreBoard:
 		curboard[s1][s2] = curboard[s3][s4];	global_board[s1][s2] = global_board[s3][s4];
-		curboard[s3][s4] = pieceOld;				global_board[s3][s4] = pieceOld_global;
+		curboard[s3][s4] = pieceOld;				global_board[s3][s4] = pieceOld_global; global_piece_num[pieceOld + 7]++;
 		global_piece_pos[global_board[s1][s2]][0] = s1; global_piece_pos[global_board[s1][s2]][1] = s2;
 		global_piece_pos[pieceOld_global][0] = s3; global_piece_pos[pieceOld_global][1] = s4;
 
@@ -5138,7 +4391,7 @@ static int maxmin_root(HashTable* H, uint64_t initial_board_hash, int8_t curboar
 		for (int i = 0; i < arrnum; i++)
 		{
 			int8_t s1 = curavamove[i] >> 12 & 0b1111, s2 = curavamove[i] >> 8 & 0b1111, s3 = curavamove[i] >> 4 & 0b1111, s4 = curavamove[i] & 0b1111;
-			int pieceOld = curboard[s3][s4], pieceOld_global = global_board[s3][s4];
+			int pieceOld = curboard[s3][s4], pieceOld_global = global_board[s3][s4]; global_piece_num[pieceOld + 7]--;
 
 			curboard[s3][s4] = curboard[s1][s2];	global_board[s3][s4] = global_board[s1][s2];
 			curboard[s1][s2] = 0;					global_board[s1][s2] = 0;
@@ -5163,7 +4416,7 @@ static int maxmin_root(HashTable* H, uint64_t initial_board_hash, int8_t curboar
 				//printf("hash_saved No.%d move %d%d%d%d  depth %d  score %d  exact %d\n", i, curavamove[i] >> 12 & 0b1111, (curavamove[i] >> 8) & 0b1111, (curavamove[i] >> 4) & 0b1111, curavamove[i] & 0b1111, hashback_depth, -hashback_value, hashback_exact);
 			}
 			curboard[s1][s2] = curboard[s3][s4];	global_board[s1][s2] = global_board[s3][s4];
-			curboard[s3][s4] = pieceOld;				global_board[s3][s4] = pieceOld_global;
+			curboard[s3][s4] = pieceOld;				global_board[s3][s4] = pieceOld_global; global_piece_num[pieceOld + 7]++;
 			global_piece_pos[global_board[s1][s2]][0] = s1;	global_piece_pos[global_board[s1][s2]][1] = s2;
 			global_piece_pos[pieceOld_global][0] = s3;	global_piece_pos[pieceOld_global][1] = s4;
 
@@ -5184,7 +4437,7 @@ static int maxmin_root(HashTable* H, uint64_t initial_board_hash, int8_t curboar
 	{
 		int8_t s1 = curavamove[i] >> 12 & 0b1111, s2 = curavamove[i] >> 8 & 0b1111, s3 = curavamove[i] >> 4 & 0b1111, s4 = curavamove[i] & 0b1111;
 
-		int pieceOld = curboard[s3][s4], pieceOld_global = global_board[s3][s4];
+		int pieceOld = curboard[s3][s4], pieceOld_global = global_board[s3][s4]; global_piece_num[pieceOld + 7]--;
 		if (color == 1) {//如果吃的是将，则赢了
 			if (pieceOld == -5) {
 				backscore = 30000;
@@ -5223,7 +4476,7 @@ static int maxmin_root(HashTable* H, uint64_t initial_board_hash, int8_t curboar
 			}
 		}
 		curboard[s1][s2] = curboard[s3][s4];	global_board[s1][s2] = global_board[s3][s4];
-		curboard[s3][s4] = pieceOld;				global_board[s3][s4] = pieceOld_global;
+		curboard[s3][s4] = pieceOld;				global_board[s3][s4] = pieceOld_global; global_piece_num[pieceOld + 7]++;
 		global_piece_pos[global_board[s1][s2]][0] = s1; global_piece_pos[global_board[s1][s2]][1] = s2;
 		global_piece_pos[pieceOld_global][0] = s3; global_piece_pos[pieceOld_global][1] = s4;
 
@@ -5242,7 +4495,7 @@ static int maxmin_root(HashTable* H, uint64_t initial_board_hash, int8_t curboar
 
 int main()
 {
-	printf("By军棋坑民 date 2025.07.28\n以下为配置信息：\n哈希表内存池大小64M，其大小自动扩容\n");
+	printf("By军棋坑民 date 2025.09.06\n以下为配置信息：\n哈希表内存池大小64M，其大小自动扩容\n");
 	initgraph(608, 645, 1);
 	loadimage(&img, "context.png", 800, 645);
 	putimage(0, 0, &img);
@@ -5321,7 +4574,7 @@ int main()
 		std::cout << "未指定是否电脑自己和自己下，默认玩家和电脑下" << std::endl;
 	}
 	GetPrivateProfileString("程序设置", "大于多少兆节点停止加深（单位M，一般设置为3）", "3", buffer, 256, "./Setting.ini");
-	int stop_nodes = atoi(buffer);
+	unsigned int stop_nodes = atoi(buffer);
 	GetPrivateProfileString("程序设置", "大于多少K节点停止加深（单位K，一般设置为0）", "0", buffer, 256, "./Setting.ini");
 	int stop_node = atoi(buffer);
 	std::cout << "超过" << stop_nodes << "M " << stop_node << "K 节点停止加深" << std::endl;
@@ -5593,6 +4846,7 @@ computer:
 	for (int8_t cur_depth = 1; cur_depth <= 99; cur_depth += 1) {
 		printf("searching depth %d\n", cur_depth);
 		moveResult = maxmin_root(table, initial_board_hash, board, color, cur_depth, 0);
+
 		if (moveResult == -1 || arrnum == 0)
 		{
 			printf("bestmove Null\n");
